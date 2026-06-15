@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow, noarchive, nosnippet">
+<title>Divya Gupta — Security Analyst &amp; Aspiring Pentester</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #0a0612;
+    --bg-soft: #100a1c;
+    --surface: #161024;
+    --surface-2: #1d1530;
+    --border: #2b2040;
+    --border-bright: #4a2f73;
+    --violet: #a855f7;
+    --violet-bright: #d8aaff;
+    --violet-dim: #5b21a6;
+    --violet-glow: rgba(168, 85, 247, 0.35);
+    --green: #4ade80;
+    --text: #f1ecf9;
+    --text-muted: #9c90b3;
+    --text-dim: #6f6485;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Inter', sans-serif;
+    --maxw: 1080px;
+  }
+
+  * { margin:0; padding:0; box-sizing:border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body{
+    background:
+      radial-gradient(ellipse 900px 500px at 15% -10%, rgba(168,85,247,0.16), transparent 60%),
+      radial-gradient(ellipse 700px 600px at 110% 30%, rgba(124,58,237,0.14), transparent 60%),
+      var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* faint grid overlay */
+  body::before{
+    content:"";
+    position: fixed;
+    inset:0;
+    background-image:
+      linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+    background-size: 42px 42px;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse 70% 70% at 50% 0%, black 0%, transparent 75%);
+  }
+
+  a { color: var(--violet-bright); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+
+  .wrap{
+    max-width: var(--maxw);
+    margin: 0 auto;
+    padding: 0 24px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ---------- NAV ---------- */
+  header{
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    background: rgba(10,6,18,0.75);
+    backdrop-filter: blur(10px);
+    border-bottom: 1px solid var(--border);
+  }
+  nav.wrap{
+    display:flex;
+    align-items:center;
+    justify-content: space-between;
+    padding: 16px 24px;
+  }
+  .logo{
+    font-family: var(--mono);
+    font-weight: 700;
+    font-size: 1.05rem;
+    color: var(--text);
+    letter-spacing: 0.5px;
+  }
+  .logo span{ color: var(--violet); }
+  .nav-links{
+    display:flex;
+    gap: 28px;
+    list-style:none;
+    font-family: var(--mono);
+    font-size: 0.85rem;
+  }
+  .nav-links a{ color: var(--text-muted); transition: color .15s ease; }
+  .nav-links a:hover{ color: var(--violet-bright); text-decoration:none; }
+  .nav-links .num{ color: var(--violet-dim); }
+  .nav-toggle{ display:none; }
+
+  @media (max-width: 720px){
+    .nav-links{ display:none; }
+  }
+
+  /* ---------- HERO ---------- */
+  .hero{
+    padding: 100px 0 80px;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    text-align:center;
+    gap: 28px;
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--green);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .eyebrow .dot{
+    width:8px; height:8px; border-radius:50%;
+    background: var(--green);
+    box-shadow: 0 0 10px var(--green);
+    animation: pulse 2s infinite ease-in-out;
+  }
+  @keyframes pulse{
+    0%,100%{ opacity:1; }
+    50%{ opacity:0.35; }
+  }
+
+  .hero h1{
+    font-family: var(--mono);
+    font-size: clamp(2.2rem, 6vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1.15;
+    background: linear-gradient(135deg, var(--text) 30%, var(--violet-bright) 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero p.lead{
+    max-width: 620px;
+    color: var(--text-muted);
+    font-size: 1.05rem;
+  }
+
+  /* Terminal window */
+  .terminal{
+    width: 100%;
+    max-width: 680px;
+    background: var(--surface);
+    border: 1px solid var(--border-bright);
+    border-radius: 10px;
+    box-shadow: 0 0 60px -10px var(--violet-glow), 0 20px 50px -20px rgba(0,0,0,0.6);
+    overflow:hidden;
+    text-align: left;
+  }
+  .terminal-bar{
+    display:flex;
+    align-items:center;
+    gap: 8px;
+    padding: 10px 14px;
+    background: var(--surface-2);
+    border-bottom: 1px solid var(--border);
+  }
+  .terminal-bar .tdot{ width:11px; height:11px; border-radius:50%; }
+  .tdot.red{ background:#ff5f56; }
+  .tdot.yellow{ background:#ffbd2e; }
+  .tdot.green{ background:#27c93f; }
+  .terminal-title{
+    margin-left: 8px;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .terminal-body{
+    font-family: var(--mono);
+    font-size: 0.92rem;
+    padding: 22px 22px 28px;
+    min-height: 168px;
+  }
+  .terminal-body .line{ margin-bottom: 10px; white-space: pre-wrap; }
+  .terminal-body .prompt{ color: var(--green); }
+  .terminal-body .path{ color: var(--violet-bright); }
+  .terminal-body .out{ color: var(--text); padding-left: 0; }
+  .cursor{
+    display:inline-block;
+    width: 8px; height: 1.05em;
+    background: var(--violet-bright);
+    vertical-align: text-bottom;
+    animation: blink 1s steps(1) infinite;
+    margin-left: 2px;
+  }
+  @keyframes blink{ 50%{ opacity:0; } }
+
+  .hero-links{
+    display:flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content:center;
+    margin-top: 6px;
+  }
+  .btn{
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    padding: 11px 22px;
+    border-radius: 6px;
+    border: 1px solid var(--border-bright);
+    color: var(--text);
+    transition: all .15s ease;
+  }
+  .btn:hover{
+    border-color: var(--violet);
+    background: var(--surface);
+    text-decoration:none;
+    transform: translateY(-2px);
+  }
+  .btn.primary{
+    background: var(--violet);
+    border-color: var(--violet);
+    color: #0a0612;
+    font-weight: 700;
+  }
+  .btn.primary:hover{
+    background: var(--violet-bright);
+    box-shadow: 0 0 24px var(--violet-glow);
+  }
+
+  /* ---------- SECTION COMMON ---------- */
+  section{ padding: 70px 0; border-top: 1px solid var(--border); }
+  .section-head{
+    display:flex;
+    align-items:baseline;
+    gap: 14px;
+    margin-bottom: 38px;
+  }
+  .section-head .tag{
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    color: var(--violet);
+    border: 1px solid var(--border-bright);
+    border-radius: 4px;
+    padding: 4px 10px;
+    background: var(--surface);
+  }
+  .section-head h2{
+    font-family: var(--mono);
+    font-size: 1.6rem;
+    font-weight: 700;
+    color: var(--text);
+  }
+  .reveal{
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+  .reveal.visible{ opacity: 1; transform: translateY(0); }
+
+  /* ---------- ABOUT ---------- */
+  .about-grid{
+    display:grid;
+    grid-template-columns: 1.5fr 1fr;
+    gap: 36px;
+    align-items: start;
+  }
+  .about-grid p{ color: var(--text-muted); margin-bottom: 14px; }
+  .about-grid p strong{ color: var(--text); }
+  .about-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 22px;
+  }
+  .about-card h3{
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--violet-bright);
+    margin-bottom: 12px;
+  }
+  .about-card ul{ list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .about-card li{
+    font-family: var(--mono);
+    font-size: 0.85rem;
+    color: var(--text-muted);
+    display:flex;
+    gap:10px;
+  }
+  .about-card li::before{ content:"›"; color: var(--violet); }
+
+  @media (max-width: 800px){
+    .about-grid{ grid-template-columns: 1fr; }
+  }
+
+  /* ---------- SKILLS ---------- */
+  .skill-group{ margin-bottom: 40px; }
+  .skill-group:last-child{ margin-bottom: 0; }
+  .skill-group-title{
+    font-family: var(--mono);
+    font-size: 0.95rem;
+    color: var(--text-muted);
+    margin-bottom: 16px;
+    display:flex;
+    align-items:center;
+    gap: 10px;
+  }
+  .skill-group-title .bracket{ color: var(--violet); }
+
+  .skills-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 14px;
+  }
+  .skill-card{
+    position: relative;
+    height: 130px;
+    perspective: 800px;
+    cursor: pointer;
+  }
+  .skill-inner{
+    position: absolute; inset:0;
+    transform-style: preserve-3d;
+    transition: transform .5s cubic-bezier(.4,.2,.2,1);
+    border-radius: 10px;
+  }
+  .skill-card:hover .skill-inner,
+  .skill-card.flipped .skill-inner{ transform: rotateY(180deg); }
+
+  .skill-face{
+    position:absolute; inset:0;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding: 14px;
+    transition: border-color .2s ease, box-shadow .2s ease;
+  }
+  .skill-card:hover .skill-face.front{
+    border-color: var(--border-bright);
+    box-shadow: 0 0 22px -8px var(--violet-glow);
+  }
+  .skill-face .emoji{ font-size: 1.9rem; margin-bottom: 10px; }
+  .skill-face .name{
+    font-family: var(--mono);
+    font-size: 0.82rem;
+    font-weight: 600;
+    color: var(--text);
+  }
+  .skill-face.back{
+    transform: rotateY(180deg);
+    background: var(--surface-2);
+    border-color: var(--violet-dim);
+  }
+  .skill-face.back .desc{
+    font-size: 0.74rem;
+    color: var(--text-muted);
+    line-height: 1.45;
+  }
+
+  /* ---------- EXPERIENCE ---------- */
+  .timeline{
+    position: relative;
+    padding-left: 28px;
+    border-left: 2px solid var(--border-bright);
+  }
+  .tl-item{ position: relative; margin-bottom: 44px; }
+  .tl-item:last-child{ margin-bottom: 0; }
+  .tl-item::before{
+    content:"";
+    position:absolute;
+    left: -34px;
+    top: 4px;
+    width: 12px; height: 12px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 2px solid var(--violet);
+    box-shadow: 0 0 0 4px rgba(168,85,247,0.12);
+  }
+  .tl-date{
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--violet-bright);
+    margin-bottom: 4px;
+    letter-spacing: 0.5px;
+  }
+  .tl-role{ font-size: 1.05rem; font-weight: 700; margin-bottom: 2px; }
+  .tl-org{ color: var(--text-muted); font-size: 0.9rem; margin-bottom: 12px; }
+  .tl-item ul{ list-style:none; display:flex; flex-direction:column; gap: 8px; }
+  .tl-item li{
+    color: var(--text-muted);
+    font-size: 0.92rem;
+    padding-left: 18px;
+    position: relative;
+  }
+  .tl-item li::before{
+    content:"$";
+    position:absolute; left:0;
+    color: var(--violet-dim);
+    font-family: var(--mono);
+  }
+  .tl-tools{
+    margin-top: 12px;
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .tl-tools span{ color: var(--violet); }
+  .tl-note{
+    font-style: italic;
+    color: var(--text-dim);
+    font-size: 0.88rem;
+    margin-bottom: 12px;
+  }
+
+  /* ---------- CERTIFICATIONS ---------- */
+  .cert-grid{
+    display:grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 18px;
+  }
+  .cert-card{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 20px;
+    transition: border-color .2s ease, transform .2s ease;
+  }
+  .cert-card:hover{
+    border-color: var(--violet);
+    transform: translateY(-4px);
+  }
+  .cert-card .cert-emoji{ font-size: 1.6rem; margin-bottom: 10px; }
+  .cert-card h4{ font-size: 0.98rem; margin-bottom: 6px; }
+  .cert-card p{
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+  .cert-card .badge{
+    display:inline-block;
+    margin-top: 10px;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    color: var(--green);
+    border: 1px solid rgba(74,222,128,0.3);
+    background: rgba(74,222,128,0.08);
+    padding: 3px 9px;
+    border-radius: 4px;
+  }
+
+  /* ---------- LABS ---------- */
+  .log{
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-family: var(--mono);
+    font-size: 0.86rem;
+    padding: 22px;
+    overflow-x: auto;
+  }
+  .log .row{ display:flex; gap: 14px; margin-bottom: 10px; }
+  .log .row:last-child{ margin-bottom: 0; }
+  .log .tag-ok{ color: var(--green); flex-shrink:0; }
+  .log .msg{ color: var(--text-muted); }
+  .log .msg strong{ color: var(--text); }
+
+  /* ---------- CONTACT / FOOTER ---------- */
+  footer{
+    padding: 70px 0 40px;
+    text-align:center;
+  }
+  footer h2{
+    font-family: var(--mono);
+    font-size: 1.6rem;
+    margin-bottom: 14px;
+  }
+  footer p{ color: var(--text-muted); margin-bottom: 28px; }
+  .contact-links{
+    display:flex;
+    gap: 16px;
+    justify-content:center;
+    flex-wrap: wrap;
+    margin-bottom: 50px;
+  }
+  .foot-note{
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--text-dim);
+  }
+  .foot-note .violet{ color: var(--violet); }
+</style>
+</head>
+<body>
+
+<header>
+  <nav class="wrap">
+    <div class="logo">Divya Gupta</div>
+    <ul class="nav-links">
+      <li><a href="#about"><span class="num">01.</span> about</a></li>
+      <li><a href="#skills"><span class="num">02.</span> skills</a></li>
+      <li><a href="#experience"><span class="num">03.</span> experience</a></li>
+      <li><a href="#certifications"><span class="num">04.</span> certs</a></li>
+      <li><a href="#labs"><span class="num">05.</span> labs</a></li>
+      <li><a href="#contact"><span class="num">06.</span> contact</a></li>
+    </ul>
+  </nav>
+</header>
+
+<main class="wrap">
+
+  <!-- HERO -->
+  <section class="hero" style="border-top:none;">
+    <div class="eyebrow"><span class="dot"></span> Status: Online — Open to Opportunities</div>
+    <h1>Divya Gupta</h1>
+    <p class="lead">SOC Analyst building toward a career in Penetration Testing (VAPT) &amp; AI Security — defensive roots, offensive ambitions.</p>
+
+    <div class="terminal">
+      <div class="terminal-bar">
+        <span class="tdot red"></span>
+        <span class="tdot yellow"></span>
+        <span class="tdot green"></span>
+        <span class="terminal-title">root — zsh</span>
+      </div>
+      <div class="terminal-body" id="terminal-output"></div>
+    </div>
+
+    <div class="hero-links">
+      <a class="btn primary" href="#contact">Get in touch</a>
+     <!-- <a class="btn" href="resume.pdf" download>Download Resume</a>
+      <a class="btn" href="https://tryhackme.com/" target="_blank" rel="noopener">TryHackMe Profile ↗</a>  -->
+    </div>
+  </section>
+
+  <!-- ABOUT -->
+  <section id="about" class="reveal">
+    <div class="section-head">
+      <span class="tag">01</span>
+      <h2>about.md</h2>
+    </div>
+    <div class="about-grid">
+      <div>
+        <p>Cybersecurity professional with hands-on experience as a <strong>SOC Analyst</strong> and a background in IT service desk support. Strong foundation in threat detection, incident response, networking, and web application security — validated by <strong>CompTIA Security+</strong> and <strong>INE eWPT</strong> certifications.</p>
+        <p>Actively building offensive security and AI Security skills, covering LLM vulnerabilities, prompt injection, and adversarial machine learning. Currently working toward a transition from <strong>SOC operations into Penetration Testing / VAPT and AI Security roles</strong> — combining a defensive security background with a growing offensive and AI-focused skill set.</p>
+        <p>Bachelor of Computer Science, 2020 – 2023.</p>
+      </div>
+      <div class="about-card">
+        <h3>// career_objective.txt</h3>
+        <ul>
+          <li>Target roles: Penetration Tester, VAPT Analyst, AI Security Analyst</li>
+          <li>Current role: SOC Analyst @ Zensar Technologies</li>
+          <li>Building: Burp Suite + LLM security lab reps</li>
+          <li>Path: SOC → Red Team / AI Security</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <!-- SKILLS -->
+  <section id="skills" class="reveal">
+    <div class="section-head">
+      <span class="tag">02</span>
+      <h2>skills.json</h2>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title"><span class="bracket">[</span>SOC &amp; Defensive Operations<span class="bracket">]</span></div>
+      <div class="skills-grid">
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🛡️</div><div class="name">SOC Operations</div></div>
+          <div class="skill-face back"><div class="desc">Day-to-day monitoring, threat hunting, detection &amp; protection workflows.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🔎</div><div class="name">Microsoft Defender</div></div>
+          <div class="skill-face back"><div class="desc">Proactively investigate and triage on active alerts.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">📊</div><div class="name">Microsoft Sentinel</div></div>
+          <div class="skill-face back"><div class="desc">SIEM monitoring, log analytics, and alert triage using KQL.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🧬</div><div class="name">Malware Analysis</div></div>
+          <div class="skill-face back"><div class="desc">Foundational static analysis to assist in triaging potential threats.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🎯</div><div class="name">MITRE ATT&amp;CK</div></div>
+          <div class="skill-face back"><div class="desc">Mapping adversary behaviour to TTPs for detection &amp; response.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🪪</div><div class="name">Active Directory</div></div>
+          <div class="skill-face back"><div class="desc">User/account management, password resets, access troubleshooting.</div></div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title"><span class="bracket">[</span>VAPT &amp; Offensive Security<span class="bracket">]</span></div>
+      <div class="skills-grid">
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🐞</div><div class="name">Web App Pentesting</div></div>
+          <div class="skill-face back"><div class="desc">SQLi, XSS, CSRF, broken auth &amp; brute force via hands-on labs.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🧰</div><div class="name">Burp Suite</div></div>
+          <div class="skill-face back"><div class="desc">Intercepting proxy &amp; scanner used across eWPT and lab work.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">📡</div><div class="name">Nmap &amp; Recon</div></div>
+          <div class="skill-face back"><div class="desc">Network discovery, port scanning, and service enumeration.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">📋</div><div class="name">OWASP Top 10</div></div>
+          <div class="skill-face back"><div class="desc">Working knowledge of the pentest lifecycle: recon → exploit → report.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🔓</div><div class="name">Vulnerability Assessment</div></div>
+          <div class="skill-face back"><div class="desc">Identifying and prioritising weaknesses against CIS / NIST baselines.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🎭</div><div class="name">Social Engineering</div></div>
+          <div class="skill-face back"><div class="desc">Recognising &amp; mitigating phishing, pretexting and human-layer attacks.</div></div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title"><span class="bracket">[</span>AI &amp; LLM Security<span class="bracket">]</span></div>
+      <div class="skills-grid">
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🤖</div><div class="name">LLM Security</div></div>
+          <div class="skill-face back"><div class="desc">Understanding how LLM-integrated apps fail and get exploited.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">💉</div><div class="name">Prompt Injection</div></div>
+          <div class="skill-face back"><div class="desc">Direct &amp; indirect injection / jailbreak techniques and defenses.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">⚔️</div><div class="name">Adversarial ML</div></div>
+          <div class="skill-face back"><div class="desc">Concepts behind attacks that fool or manipulate ML models.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">📜</div><div class="name">OWASP Top 10 for LLMs</div></div>
+          <div class="skill-face back"><div class="desc">Risk framework for securing AI-integrated applications.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🧠</div><div class="name">AI Agent Scripting</div></div>
+          <div class="skill-face back"><div class="desc">Python foundations for building agents for security-focused tasks.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🤝</div><div class="name">Microsoft Copilot</div></div>
+          <div class="skill-face back"><div class="desc">Applying AI copilots within security workflows &amp; investigations.</div></div>
+        </div></div>
+      </div>
+    </div>
+
+    <div class="skill-group">
+      <div class="skill-group-title"><span class="bracket">[</span>Tools, OS &amp; Languages<span class="bracket">]</span></div>
+      <div class="skills-grid">
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🐍</div><div class="name">Python</div></div>
+          <div class="skill-face back"><div class="desc">Scripting for automation, analysis, and AI agent prototypes.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🐉</div><div class="name">Kali Linux</div></div>
+          <div class="skill-face back"><div class="desc">Primary environment for security testing &amp; lab work.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🪟</div><div class="name">Windows</div></div>
+          <div class="skill-face back"><div class="desc">Administration, AD management &amp; endpoint troubleshooting.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🦈</div><div class="name">Wireshark</div></div>
+          <div class="skill-face back"><div class="desc">Packet capture &amp; protocol analysis for network troubleshooting.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">☁️</div><div class="name">Microsoft Azure</div></div>
+          <div class="skill-face back"><div class="desc">Cloud fundamentals, Intune device management &amp; M365 support.</div></div>
+        </div></div>
+        <div class="skill-card"><div class="skill-inner">
+          <div class="skill-face front"><div class="emoji">🗄️</div><div class="name">KQL &amp; SQL</div></div>
+          <div class="skill-face back"><div class="desc">Querying logs and structured data for investigation &amp; reporting.</div></div>
+        </div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- EXPERIENCE -->
+  <section id="experience" class="reveal">
+    <div class="section-head">
+      <span class="tag">03</span>
+      <h2>experience.log</h2>
+    </div>
+
+    <div class="timeline">
+      <div class="tl-item">
+        <div class="tl-date">DEC 2025 — PRESENT</div>
+        <div class="tl-role">SOC Analyst</div>
+        <div class="tl-org">Zensar Technologies</div>
+        <div class="tl-note">Transitioned into the Security team in Nov 2025 and progressed into a SOC Analyst role from Dec 2025, supporting threat hunting, detection, and protection activities.</div>
+        <ul>
+          <li>Support threat hunting, detection, and protection activities as part of the SOC team's day-to-day operations.</li>
+          <li>Apply working knowledge of TCP/IP and OSI networking models and common networking protocols to analyze security events.</li>
+          <li>Perform foundational malware analysis to assist in identifying and triaging potential threats.</li>
+          <li>Apply understanding of social engineering attack techniques and mitigation strategies during security awareness and incident reviews.</li>
+          <li>Use foundational knowledge of SOC processes, SIEM systems, and the MITRE ATT&amp;CK framework to support detection and response activities.</li>
+          <li>Built custom workbooks in Microsoft Sentinel using KQL queries and JSON — these turn raw log data into clear, visual dashboards that help the SOC team spot trends faster, monitor key security metrics at a glance, and cut down investigation time during incidents.</li>
+        </ul>
+        <div class="tl-tools">tools_used: <span>Microsoft Azure, Microsoft Sentinel, Microsoft Defender, ServiceNow, Microsoft Copilot</span></div>
+      </div>
+
+      <div class="tl-item">
+        <div class="tl-date">APR 2025 — OCT 2025</div>
+        <div class="tl-role">Consultant — IT Service Desk Analyst (Tier 1 Support)</div>
+        <div class="tl-org">Zensar Technologies</div>
+        <ul>
+          <li>Provided Tier 1 support for hardware, software, and network issues, ensuring prompt and effective resolution.</li>
+          <li>Communicated with users via phone, email, and remote tools, maintaining a professional and helpful approach.</li>
+          <li>Handled user account and access tasks in Active Directory, including password resets and unlocks.</li>
+          <li>Performed secure password management and basic user access troubleshooting.</li>
+          <li>Installed and supported Microsoft 365 applications such as Outlook, Teams, and OneDrive.</li>
+          <li>Maintained detailed records in the ticketing system and collaborated with senior teams.</li>
+        </ul>
+        <div class="tl-tools">tools_used: <span>Microsoft Azure, Microsoft 365, ServiceNow, PowerShell, Intune, Active Directory</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATIONS -->
+  <section id="certifications" class="reveal">
+    <div class="section-head">
+      <span class="tag">04</span>
+      <h2>certifications.yaml</h2>
+    </div>
+    <div class="cert-grid">
+      <div class="cert-card">
+        <div class="cert-emoji">🔐</div>
+        <h4>CompTIA Security+ (SY0-701)</h4>
+        <p>Core cybersecurity principles &amp; best practices</p>
+        <span class="badge">Cleared · Jun 15 2025</span>
+      </div>
+      <div class="cert-card">
+        <div class="cert-emoji">🕷️</div>
+        <h4>eWPT — Web App Pentester</h4>
+        <p>INE / eLearnSecurity</p>
+        <span class="badge">Cleared · Jun 6 2026</span>
+      </div>
+      <div class="cert-card">
+        <div class="cert-emoji">🎓</div>
+        <h4>Google Cybersecurity Professional Certificate</h4>
+        <p>Coursera</p>
+        <span class="badge">Completed</span>
+      </div>
+      <div class="cert-card">
+        <div class="cert-emoji">🐍</div>
+        <h4>Python Programming</h4>
+        <p>Scripting &amp; automation fundamentals</p>
+        <span class="badge">Completed</span>
+      </div>
+      <div class="cert-card">
+        <div class="cert-emoji">🤖</div>
+        <h4>TryHackMe — AI Security Path</h4>
+        <p>LLM vulnerabilities, prompt injection, adversarial ML</p>
+        <span class="badge">Completed</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- LABS -->
+  <section id="labs" class="reveal">
+    <div class="section-head">
+      <span class="tag">05</span>
+      <h2>labs &amp; continuous_learning.sh</h2>
+    </div>
+    <div class="log">
+      <div class="row"><span class="tag-ok">[done]</span><span class="msg"><strong>AI Security Path</strong> — TryHackMe — covered LLM security, prompt injection, adversarial machine learning, and the OWASP Top 10 for LLM Applications.</span></div>
+      <div class="row"><span class="tag-ok">[active]</span><span class="msg">Practicing hands-on rooms across <strong>networking</strong>, <strong>web application security / VAPT</strong>, and <strong>SOC-focused</strong> modules to build practical offensive &amp; defensive skills.</span></div>
+      <div class="row"><span class="tag-ok">[next]</span><span class="msg">Building small <strong>Python-based AI agents</strong> for security-focused tasks as part of the AI Security track.</span></div>
+    </div>
+  </section>
+
+  <!-- CONTACT -->
+  <footer id="contact" class="reveal">
+    <div class="section-head" style="justify-content:center;">
+      <span class="tag">06</span>
+      <h2>contact.sh</h2>
+    </div>
+    <p>Open to SOC, VAPT/Penetration Testing, and AI Security opportunities — let's talk.</p>
+    <div class="contact-links">
+      <a class="btn primary" href="mailto:divyagupta2502@gmail.com">✉️ Email Me</a>
+      <a class="btn" href="https://linkedin.com/in/divya-gupta-99a806233" target="_blank" rel="noopener">🔗 LinkedIn</a>
+    </div>
+    <div class="foot-note">© Divya Gupta — built with <span class="violet">HTML, CSS &amp; JS</span> · hosted on GitHub Pages</div>
+  </footer>
+
+</main>
+
+<script>
+  // Typing terminal animation
+  const lines = [
+    { type: 'cmd', text: 'whoami' },
+    { type: 'out', text: '> Divya Gupta' },
+    { type: 'cmd', text: 'cat role.txt' },
+    { type: 'out', text: '> Aspiring Penetration Tester (VAPT) · AI Security Researcher · SOC Analyst' },
+    { type: 'cmd', text: './mission.sh' },
+    { type: 'out', text: '> Transitioning from SOC Operations into Red Team & AI Security' },
+  ];
+
+  const term = document.getElementById('terminal-output');
+  let li = 0, ci = 0;
+
+  function typeLine(){
+    if(li >= lines.length){
+      const cur = document.createElement('span');
+      cur.className = 'cursor';
+      term.appendChild(cur);
+      return;
+    }
+    const line = lines[li];
+    const div = document.createElement('div');
+    div.className = 'line';
+
+    if(line.type === 'cmd'){
+      const prompt = document.createElement('span');
+      prompt.className = 'prompt';
+      prompt.textContent = 'root';
+      const path = document.createElement('span');
+      path.className = 'path';
+      path.textContent = ' ~ ';
+      div.appendChild(prompt);
+      div.appendChild(path);
+      const cmdSpan = document.createElement('span');
+      cmdSpan.className = 'out';
+      div.appendChild(cmdSpan);
+      term.appendChild(div);
+      typeChars(cmdSpan, line.text, () => { li++; ci=0; setTimeout(typeLine, 260); });
+    } else {
+      div.className = 'line out';
+      term.appendChild(div);
+      typeChars(div, line.text, () => { li++; ci=0; setTimeout(typeLine, 380); });
+    }
+  }
+
+  function typeChars(el, text, done){
+    if(ci < text.length){
+      el.textContent += text[ci];
+      ci++;
+      setTimeout(() => typeChars(el, text, done), 22);
+    } else {
+      done();
+    }
+  }
+
+  typeLine();
+
+  // Scroll reveal
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if(e.isIntersecting){ e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+  // Skill card tap-to-flip on touch devices
+  document.querySelectorAll('.skill-card').forEach(card => {
+    card.addEventListener('click', () => card.classList.toggle('flipped'));
+  });
+</script>
+
+</body>
+</html>
